@@ -5,13 +5,13 @@
 #include"Sphere.h"
 #include"Material.h"
 using namespace std;
-PhoneMaterial DIFFUSE_RED(vec3f(.75, .25, .25), vec3f(.75, .25, .25), 0, 0.1, 1, 0);
-PhoneMaterial DIFFUSE_BLUE(vec3f(.25, .25, .75), vec3f(.25, .25, .75), 0, 0.1, 1, 0);
-PhoneMaterial DIFFUSE_WHITE(vec3f(1, 1, 1), vec3f(1, 1,1), 0, 0.1, 1, 0);
-PhoneMaterial BLACK(vec3f(), vec3f(), 0, 0.1, 1, 0);
-PhoneMaterial LIGHT(vec3f(),vec3f(), 12, 0.1, 1, 0);
-PhoneMaterial MIRROR(vec3f(1,1,1), vec3f(1,1,1), 0, 1, 1, 0);
-PhoneMaterial REFR(vec3f(1, 1, 1), vec3f(1, 1, 1), 0, 1, 0.5, 0);
+PhoneMaterial DIFFUSE_RED(vec3f(.75, .25, .25), vec3f(.75, .25, .25), 0, 0.1, 1, 1.5);
+PhoneMaterial DIFFUSE_BLUE(vec3f(.25, .25, .75), vec3f(.25, .25, .75), 0, 0.1, 1, 1.5);
+PhoneMaterial DIFFUSE_WHITE(vec3f(1, 1, 1), vec3f(1, 1,1), 0, 0.1, 1, 1.5);
+PhoneMaterial BLACK(vec3f(), vec3f(), 0, 0.1, 1, 1.5);
+PhoneMaterial LIGHT(vec3f(),vec3f(), 12, 0.1, 1, 1.5);
+PhoneMaterial MIRROR(vec3f(1,1,1), vec3f(1,1,1), 0, 1, 1, 1.5);
+PhoneMaterial REFR(vec3f(1, 1, 1), vec3f(1, 1, 1), 0, 1, 0.5, 1.5);
 
 vector<Sphere> scene = {
 	Sphere(vec3f(1e5 + 1,40.8,81.6),1e5,&DIFFUSE_BLUE),//Left 
@@ -25,10 +25,17 @@ vector<Sphere> scene = {
 	Sphere(vec3f(50,681.6 - .27,81.6),600, &LIGHT) //Lite 
 };
 
-int main()
+int main(int argc,char** argv)
 {
 	Camera cam(vec3f(50, 52, 135.6), vec3f(0, -0.042612, -1), vec3f(0, 1, 0), 90);
-	Render render(scene,cam,100,4);
+	int samples = 100;
+	int depth = 4;
+	if (argc == 3)
+	{
+		sprintf(argv[1], "%d", samples);
+		sprintf(argv[2], "%d", depth);
+	}
+	Render render(scene,cam,samples,depth);
 	render.render();
 	render.WriteToFile("image.ppm");
 }
