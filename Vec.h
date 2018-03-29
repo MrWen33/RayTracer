@@ -13,8 +13,11 @@ public:
 	vec3(T x,T y,T z):x(x),y(y),z(z){}
 	vec3() :x(0), y(0), z(0) {}
 	vec3(T num) :x(num), y(num), z(num) {}
+	vec3(const vec3<T>& v) {
+		x = v.x; y = v.y; z = v.z;
+	}
 
-	T operator[](int ind) {
+	T operator[](int ind) const {
 		assert(ind >= 0 && ind <= 2);
 		if (ind == 0) return x;
 		else if (ind == 1)return y;
@@ -31,8 +34,7 @@ public:
 		return vec3<T>(x - v.x, y - v.y, z - v.z);
 	}
 
-	template<class P>
-	vec3<T> operator*(P n) const
+	vec3<T> operator*(double n) const
 	{
 		return vec3<T>(x*n, y*n, z*n);
 	}

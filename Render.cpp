@@ -1,15 +1,17 @@
 #include "Render.h"
 
-bool Render::Intersect(const Ray & r, double & t, int & id)//r为求交的光线，t为光线参数，id为与光线相交的物体id
+bool Render::Intersect(const Ray & r, double & t, int & id, vec3f& normal)//r为求交的光线，t为光线参数，id为与光线相交的物体id
 {
 	t = 1e9;
+	vec3f mayNormal;
 	for (int i = 0; i < scene.size(); ++i)
 	{
-		double distance = scene[i].Intersect(r);
+		double distance = scene[i]->Intersect(r,mayNormal);
 		if (distance > 0 && distance < t)
 		{
 			t = distance;
 			id = i;
+			normal = mayNormal;
 		}
 	}
 	return t < 1e9;
@@ -20,21 +22,20 @@ vec3f Render::RayTracer(const Ray & r, int depth)
 	if (depth > maxDepth) return vec3f();
 	double t=0;
 	int id=0;
-	if (Intersect(r, t, id))
+	vec3f normal;
+	if (Intersect(r, t, id, normal))
 	{
 		bool isInObj;//是否在物体内，为折射提供信息
-		const Sphere& sphere = scene[id];
+		const Primitive& object = *scene[id];
 		vec3f hitPoint = r.o + r.dir*t;//光线击中点
-		//计算法线并判断光线在物体内还是外
-		vec3f normal = (sphere.o - hitPoint).normalized();
 		if (normal.dot(r.dir) > 0)
 		{
 			normal = normal*-1;
-			isInObj = false;
+			isInObj = true;
 		}
-		else isInObj = true;
+		else isInObj = false;
 		double eps = 0.0001;
-		PhoneMaterial material = *(sphere.material);
+		PhoneMaterial material = *(object.material);
 
 		double diffPer = material.alpha*(1 - material.reflectiveness);
 		double specPer = material.alpha*material.reflectiveness;
@@ -43,9 +44,9 @@ vec3f Render::RayTracer(const Ray & r, int depth)
 		{
 			//return material.diffuse;
 			vec3f diffDir, specDir, refrDir;
-			diffDir = getDiffDir(r.dir, normal);
-			specDir = getSpecDir(r.dir, normal);
-			if (material.alpha > 1 - eps)
+			if(material.reflectiveness<1-eps)diffDir = getDiffDir(r.dir, normal);
+			if(material.reflectiveness>eps)specDir = getSpecDir(r.dir, normal);
+			if (material.alpha < 1 - eps)
 			{
 				double refr = material.refract;
 				if (isInObj) refr = 1 / refr;

@@ -11,12 +11,12 @@
 
 class Render {
 private:
-	std::vector<Sphere>& scene;
+	std::vector<Primitive*>& scene;
 	Camera cam;
 	int W, H,Samples,maxDepth;
 	vec3f* screen;
 
-	bool Intersect(const Ray& r,double &t,int &id);
+	bool Intersect(const Ray& r,double &t,int &id, vec3f& normal);
 
 	vec3f RayTracer(const Ray& r, int depth);
 
@@ -25,7 +25,7 @@ private:
 	vec3f getRefrDir(vec3f dir, vec3f normal, double refr);
 
 public:
-	Render(std::vector<Sphere>& scene, Camera cam,int samples,int _maxDepth,int W=600,int H=600)
+	Render(std::vector<Primitive*>& scene, Camera cam,int samples,int _maxDepth,int W=600,int H=600)
 		:scene(scene),cam(cam),maxDepth(_maxDepth),W(W),H(H)
 	{	
 		srand((unsigned)time(NULL));
