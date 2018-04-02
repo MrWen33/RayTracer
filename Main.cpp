@@ -25,14 +25,14 @@ vector<Primitive*> scene = {
 	new Sphere(vec3f(50,-1e5 + 81.6,81.6),1e5,&DIFFUSE_WHITE),//Top 
 	new Sphere(vec3f(27,16.5,47),16.5,&MIRROR),//Mirr 
 	new Sphere(vec3f(73,16.5,78),16.5,&REFR),//Glas 
-	//new Sphere(vec3f(50,681.6 - .27,81.6),600, &LIGHT) ,//Lite 
-	new Triangle(new vec3f(50,81,81.6),new vec3f(50,81,47),new vec3f(73,81,47),&LIGHT)
+	new Sphere(vec3f(50,81.6 - .27,81.6),10, &LIGHT) ,//Lite 
+	//new Triangle(new vec3f(50,81,81.6),new vec3f(50,81,47),new vec3f(73,81,47),&LIGHT)
 };
 
 int main(int argc,char** argv)
 {
 	Camera cam(vec3f(50, 52, 135.6), vec3f(0, -0.042612, -1), vec3f(0, 1, 0), 90);
-	int samples = 10;
+	int samples = 16;
 	int depth = 4;
 	if (argc == 3)
 	{
@@ -40,6 +40,6 @@ int main(int argc,char** argv)
 		sprintf(argv[2], "%d", depth);
 	}
 	Render render(scene,cam,samples,depth);
-	render.render();
+	render.render(true);
 	render.WriteToFile("image.ppm");
 }
