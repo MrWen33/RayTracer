@@ -8,5 +8,12 @@ public:
 	vec3f eye, front, up,right;
 	double fov,fovScale;
 	Camera(vec3f _eye, vec3f _front, vec3f _up, double _fov);
-	Ray getRay(double x, double y);//x,yÊôÓÚ0-1
+	inline Ray getRay(double x, double y);//x,yÊôÓÚ0-1
 };
+
+
+Ray Camera::getRay(double x, double y)
+{
+	vec3f dir = right*(x - 0.5)*fovScale + up*(y - 0.5)*fovScale + front;
+	return Ray(eye, dir);
+}

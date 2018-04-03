@@ -10,7 +10,7 @@ PhoneMaterial DIFFUSE_RED(vec3f(.75, .25, .25), vec3f(.75, .25, .25), 0, 0, 1, 1
 PhoneMaterial DIFFUSE_BLUE(vec3f(.25, .25, .75), vec3f(.25, .25, .75), 0, 0, 1, 1.5);
 PhoneMaterial DIFFUSE_WHITE(vec3f(1, 1, 1), vec3f(1, 1, 1), 0, 0, 1, 1.5);
 PhoneMaterial BLACK(vec3f(), vec3f(), 0, 0, 1, 1.5);
-PhoneMaterial LIGHT(vec3f(), vec3f(), 12, 0, 1, 1.5);
+PhoneMaterial LIGHT(vec3f(), vec3f(), 400, 0, 1, 1.5);
 PhoneMaterial MIRROR(vec3f(1, 1, 1), vec3f(1, 1, 1), 0, 1, 1, 1.5);
 PhoneMaterial REFR(vec3f(1, 1, 1), vec3f(1, 1, 1), 0, 1, 0.2, 1.5);
 
@@ -25,13 +25,13 @@ vector<Primitive*> scene = {
 	new Sphere(vec3f(50,-1e5 + 81.6,81.6),1e5,&DIFFUSE_WHITE),//Top 
 	new Sphere(vec3f(27,16.5,47),16.5,&MIRROR),//Mirr 
 	new Sphere(vec3f(73,16.5,78),16.5,&REFR),//Glas 
-	new Sphere(vec3f(50,81.6 - .27,81.6),10, &LIGHT) ,//Lite 
+	new Sphere(vec3f(50,81.6 - 16.5,81.6),1.5, &LIGHT) ,//Lite 
 	//new Triangle(new vec3f(50,81,81.6),new vec3f(50,81,47),new vec3f(73,81,47),&LIGHT)
 };
 
 int main(int argc,char** argv)
 {
-	Camera cam(vec3f(50, 52, 135.6), vec3f(0, -0.042612, -1), vec3f(0, 1, 0), 90);
+	Camera cam(vec3f(50, 52, 145.6), vec3f(0, -0.042612, -1), vec3f(0, 1, 0), 90);
 	int samples = 16;
 	int depth = 4;
 	if (argc == 3)
@@ -39,7 +39,7 @@ int main(int argc,char** argv)
 		sprintf(argv[1], "%d", samples);
 		sprintf(argv[2], "%d", depth);
 	}
-	Render render(scene,cam,samples,depth);
+	Render render(scene,cam,samples,depth,1000,1000);
 	render.render(true);
 	render.WriteToFile("image.ppm");
 }

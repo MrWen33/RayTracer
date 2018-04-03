@@ -8,8 +8,5 @@ class Primitive {
 public:
 	PhoneMaterial* material;
 	Primitive(PhoneMaterial* _material) :material(_material) {}
-	virtual double Intersect(const Ray& r, vec3f& normal) const = 0
-	{
-		DEBUGPRINT("WRONG");
-	}
+	virtual double Intersect(const Ray& r, vec3f& normal) const = 0;
 };

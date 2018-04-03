@@ -2,14 +2,14 @@
 #include<iostream>
 #include<cassert>
 #include<cmath>
-#define PI 3.1415926
+const double PI = 3.1415926;
+const double InvPI = 1 / PI;
 #define DEBUGPRINT(x) std::cout<<x<<std::endl
 
 template <class T>
 class vec3 {
 public:
 	T x, y, z;
-
 	vec3(T x,T y,T z):x(x),y(y),z(z){}
 	vec3() :x(0), y(0), z(0) {}
 	vec3(T num) :x(num), y(num), z(num) {}

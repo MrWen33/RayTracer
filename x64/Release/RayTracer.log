@@ -1,0 +1,18 @@
+﻿cl : 命令行 warning D9025: 正在重写“/sdl”(用“/GS-”)
+  Camera.cpp
+  Main.cpp
+c:\users\mrwen33\documents\visual studio 2017\projects\raytracer\raytracer\UtilFuncs.h(11): warning C4244: “return”: 从“double”转换到“int”，可能丢失数据
+Main.cpp(39): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.14393.0\ucrt\stdio.h(1769): note: 参见“sprintf”的声明
+Main.cpp(40): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.14393.0\ucrt\stdio.h(1769): note: 参见“sprintf”的声明
+  Render.cpp
+c:\users\mrwen33\documents\visual studio 2017\projects\raytracer\raytracer\UtilFuncs.h(11): warning C4244: “return”: 从“double”转换到“int”，可能丢失数据
+  UtilFuncs.h
+UtilFuncs.h(11): warning C4244: “return”: 从“double”转换到“int”，可能丢失数据
+  正在生成代码
+  32 of 259 functions (12.4%) were compiled, the rest were copied from previous compilation.
+    1 functions were new in current compilation
+    15 functions had inline decision re-evaluated but remain unchanged
+  已完成代码的生成
+  RayTracer.vcxproj -> C:\Users\mrwen33\documents\visual studio 2017\Projects\RayTracer\x64\Release\RayTracer.exe
