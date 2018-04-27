@@ -1,21 +1,15 @@
 #include<iostream>
+#include<ctime>
 #include"Vec.h"
 #include"Render.h"
 #include"Camera.h"
 #include"Sphere.h"
 #include"Material.h"
 #include"Triangle.h"
+#include"ObjReader.h"
 using namespace std;
-PhoneMaterial DIFFUSE_RED(vec3f(.75, .25, .25), vec3f(.75, .25, .25), 0, 0, 1, 1.5);
-PhoneMaterial DIFFUSE_BLUE(vec3f(.25, .25, .75), vec3f(.25, .25, .75), 0, 0, 1, 1.5);
-PhoneMaterial DIFFUSE_WHITE(vec3f(1, 1, 1), vec3f(1, 1, 1), 0, 0, 1, 1.5);
-PhoneMaterial BLACK(vec3f(), vec3f(), 0, 0, 1, 1.5);
-PhoneMaterial LIGHT(vec3f(), vec3f(), 400, 0, 1, 1.5);
-PhoneMaterial MIRROR(vec3f(1, 1, 1), vec3f(1, 1, 1), 0, 1, 1, 1.5);
-PhoneMaterial REFR(vec3f(1, 1, 1), vec3f(1, 1, 1), 0, 1, 0.2, 1.5);
 
-Sphere s1(vec3f(1e5 + 1, 40.8, 81.6), 1e5, &DIFFUSE_BLUE);
-Sphere light(vec3f(50, 681.6 - .27, 81.6), 600, &LIGHT);//Lite */
+
 vector<Primitive*> scene = {
 	new Sphere(vec3f(1e5 + 1,40.8,81.6),1e5,&DIFFUSE_BLUE),//Left 
 	new Sphere(vec3f(-1e5 + 99,40.8,81.6),1e5,&DIFFUSE_RED),//Rght 
@@ -31,15 +25,27 @@ vector<Primitive*> scene = {
 
 int main(int argc,char** argv)
 {
-	Camera cam(vec3f(50, 52, 145.6), vec3f(0, -0.042612, -1), vec3f(0, 1, 0), 90);
+	//Camera cam(vec3f(50, 52, 145.6), vec3f(0, -0.042612, -1), vec3f(0, 1, 0), 90);
+	time_t begin = time(NULL);
+	Camera cam(vec3f(0, 0, 30), vec3f(0, 0, -1), vec3f(0, 1, 0), 60);
+
 	int samples = 16;
-	int depth = 4;
+	int depth = 5;
 	if (argc == 3)
 	{
 		sprintf(argv[1], "%d", samples);
 		sprintf(argv[2], "%d", depth);
 	}
-	Render render(scene,cam,samples,depth,1000,1000);
-	render.render(true);
+	ObjReader orender;
+	orender.loadFile("cat.obj");
+	orender.scene.push_back(new Sphere(vec3f(0, 15, 5), 1.5, &LIGHT));
+	Render render(orender.scene,cam,samples,depth,1000,1000);
+	render.render(0);
+	cout << "Rendering Time:" << time(NULL) - begin <<"s"<< endl;
+	stringstream timeS;
+	timeS << time(NULL) - begin;
+	string Time;
+	timeS >> Time;
 	render.WriteToFile("image.ppm");
+	//system("pause");
 }

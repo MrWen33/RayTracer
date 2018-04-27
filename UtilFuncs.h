@@ -17,4 +17,4 @@ inline double rand01()
 //	return 255 * clamp(n);
 //}
 
-inline int toInt(double x) { return int(pow(clamp(x), 1 / 2.2) * 255 + .5); }
+inline int toInt(double x) { return int(pow(clamp(x), 1 / 2.2f) * 255 + .5); }

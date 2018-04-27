@@ -10,3 +10,4 @@ Camera::Camera(vec3f _eye, vec3f _front, vec3f _up, double _fov)
 	fovScale = 2*tan(fov*0.5*PI / 180);
 }
 
+

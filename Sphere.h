@@ -8,7 +8,7 @@ public:
 	vec3f o;
 	double r;
 
-	Sphere(vec3f _o, double _r, PhoneMaterial* _material)
+	Sphere(vec3f _o, double _r,const PhoneMaterial* _material)
 		:o(_o), r(_r),Primitive(_material)
 	{
 	}
@@ -37,5 +37,16 @@ public:
 			Normal = (hitPoint - o).normalized();
 			return t;
 		}
+	}
+	AABB Bound() const {
+		AABB bound;
+		bound.MaxX = o.x + r;
+		bound.MinX = o.x - r;
+		bound.MaxY = o.y + r;
+		bound.MinY = o.y - r;
+		bound.MaxZ = o.z + r;
+		bound.MinZ = o.z - r;
+		bound.objs.push_back(this);
+		return bound;
 	}
 };

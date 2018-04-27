@@ -17,6 +17,16 @@ bool Render::Intersect(const Ray & r, double & t, int & id, vec3f& normal)//rÎªÇ
 	return t < 1e9;
 }
 
+bool Render::Intersect(const Ray & r, double & t,const Primitive*& obj, vec3f& normal)//rÎªÇó½»µÄ¹âÏß£¬tÎª¹âÏß²ÎÊı£¬objÎªÓë¹âÏßÏà½»µÄÎïÌåÖ¸Õë
+{
+	ClosestHitInfo info;
+	BVHRoot->Intersect(r,&info);
+	t = info.min_t;
+	obj = info.prim;
+	normal = info.normal;
+	return t<1e9;
+}
+
 vec3f Render::RayTracer(const Ray & r, int depth)
 {
 	if (depth > maxDepth) return vec3f();
@@ -44,8 +54,8 @@ vec3f Render::RayTracer(const Ray & r, int depth)
 		{
 			//return material.diffuse;
 			vec3f diffDir, specDir, refrDir;
-			if (material.reflectiveness<1 - eps)diffDir = getDiffDir(normal);
-			if (material.reflectiveness>eps)specDir = getSpecDir(r.dir, normal);
+			if (material.reflectiveness < 1 - eps)diffDir = getDiffDir(normal);
+			if (material.reflectiveness > eps)specDir = getSpecDir(r.dir, normal);
 			if (material.alpha < 1 - eps)
 			{
 				double refr = material.refract;
@@ -60,7 +70,7 @@ vec3f Render::RayTracer(const Ray & r, int depth)
 		else//·´Éä²ãÊı¶àÊ±°´·´Éä±ÈÀıËæ»ú¼ÆËã
 		{
 			double randNum = rand() / (double)RAND_MAX;
-			if (randNum < refrPer + specPer)
+			if (randNum < refrPer)
 			{
 				double refr = material.refract;
 				if (isInObj) refr = 1 / refr;
@@ -87,16 +97,32 @@ vec3f Render::RayTracer(const Ray & r, int depth)
 	}
 }
 
+vec3f Render::TestTracer(const Ray & r)
+{
+	const Primitive* obj = NULL;
+	double t = 1e9;
+	vec3f normal;
+	ClosestHitInfo info;
+	BVHRoot->Intersect(r, &info);
+	//DEBUGPRINT(info.min_t);
+	if (info.prim)
+	{
+		return info.prim->material->diffuse;
+	}
+	else return vec3f(0, 0, 0);
+
+}
+
 vec3f Render::ExplicitRayTracer(const Ray & r, int depth, int E)
 {
 	if (depth > maxDepth) return vec3f();
 	double t = 0;
-	int id = 0;
+	const Primitive* obj = NULL;
 	vec3f normal;
-	if (Intersect(r, t, id, normal))
+	if (Intersect(r, t, obj, normal))
 	{
 		bool isInObj;//ÊÇ·ñÔÚÎïÌåÄÚ£¬ÎªÕÛÉäÌá¹©ĞÅÏ¢
-		const Primitive& object = *scene[id];
+		const Primitive& object = *obj;
 		vec3f hitPoint = r.o + r.dir*t;//¹âÏß»÷ÖĞµã
 		if (normal.dot(r.dir) > 0)
 		{
@@ -257,7 +283,7 @@ Ray Render::getShadowRay(const vec3f & hitPoint, const Sphere * LightSphere, dou
 	return Ray(hitPoint, dir);
 }
 
-void Render::render(bool isExplict)
+void Render::render(int mode)
 {
 	//¶ÔÓÚÃ¿¸öÏñËØ
 #pragma omp parallel for schedule(dynamic, 1)
@@ -279,7 +305,8 @@ void Render::render(bool isExplict)
 						//¸ù¾İ×ø±êÓÃÕÕÏà»úÀà¼ÆËãÍ¶Éä¹âÏß
 						Ray dir = cam.getRay(xbias, ybias);
 
-						if (!isExplict)r =r + RayTracer(dir, 0) / (double)Samples;
+						if (mode==1)r =r + RayTracer(dir, 0) / (double)Samples;
+						else if(mode==2)r = r + TestTracer(dir) / (double)Samples;
 						else r = r + ExplicitRayTracer(dir, 0) / (double)Samples;
 					}
 					screen[i*W + j] = screen[i*W + j] + vec3f(clamp(r.x), clamp(r.y), clamp(r.z))*.25f;

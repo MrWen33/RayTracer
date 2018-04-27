@@ -10,7 +10,7 @@ public:
 	vec3f normal;
 	vec3f P2P0;
 	vec3f P2P1;
-	Triangle(vec3f* p0, vec3f* p1, vec3f* p2,PhoneMaterial* _material):Primitive(_material)
+	Triangle(vec3f* p0, vec3f* p1, vec3f* p2,const PhoneMaterial* _material=NULL):Primitive(_material)
 	{
 		p[0] = p0;
 		p[1] = p1;
@@ -18,6 +18,17 @@ public:
 		P2P0 = *p0 - *p2;
 		P2P1 = *p1 - *p2;
 		normal = (P2P0.cross(P2P1*-1)).normalized();
+	}
+
+	Triangle(vec3f* p0, vec3f* p1, vec3f* p2, vec3f _normal=vec3f(),const PhoneMaterial* _material=NULL) :Primitive(_material)
+	{
+		p[0] = p0;
+		p[1] = p1;
+		p[2] = p2;
+		P2P0 = *p0 - *p2;
+		P2P1 = *p1 - *p2;
+		if(_normal.len()==0)normal = (P2P0.cross(P2P1*-1)).normalized();
+		else normal = _normal;
 	}
 
 	double Intersect(const Ray& r,vec3f& Normal) const
@@ -38,5 +49,15 @@ public:
 		double t =- Mat33(P2P0, P2P1, P2O).det()*InvParaDet;
 		if (t < eps)return 0;
 		return t;
+	}
+
+	AABB Bound() const
+	{
+		AABB bound;
+		bound.reset(*(p[0]));
+		bound.addPoint(*(p[1]));
+		bound.addPoint(*(p[2]));
+		bound.objs.push_back(this);
+		return bound;
 	}
 };
