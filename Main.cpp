@@ -30,16 +30,18 @@ int main(int argc,char** argv)
 	Camera cam(vec3f(0, 0, 30), vec3f(0, 0, -1), vec3f(0, 1, 0), 60);
 
 	int samples = 16;
-	int depth = 5;
+	int depth = 3;
 	if (argc == 3)
 	{
 		sprintf(argv[1], "%d", samples);
 		sprintf(argv[2], "%d", depth);
 	}
-	ObjReader orender;
-	orender.loadFile("cat.obj");
-	orender.scene.push_back(new Sphere(vec3f(0, 15, 5), 1.5, &LIGHT));
-	Render render(orender.scene,cam,samples,depth,1000,1000);
+	ObjReader oreader;
+	oreader.loadFile("cat.obj",&REFR);
+	oreader.scene.push_back(new Sphere(vec3f(0, 15, 5), 1.5, &LIGHT));
+	oreader.scene.push_back(new Sphere(vec3f(0, 0, -20), 10, &DIFFUSE_BLUE));
+	Render render(oreader.scene,cam,samples,depth,1000,1000);
+	//Render render(scene, cam, samples, depth, 1000, 1000);
 	render.render(0);
 	cout << "Rendering Time:" << time(NULL) - begin <<"s"<< endl;
 	stringstream timeS;

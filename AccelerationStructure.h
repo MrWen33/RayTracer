@@ -5,13 +5,6 @@
 #include"Primitive.h"
 #include"Boundary.h"
 
-//射线与节点相交的信息
-struct ClosestHitInfo {
-	Primitive* prim=NULL;
-	vec3f normal;
-	double min_t=1e9;
-};
-
 class BVHNode {
 	bool isLeaf;
 	AABB bbox;

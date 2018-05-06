@@ -135,14 +135,26 @@ vec3f Render::ExplicitRayTracer(const Ray & r, int depth, int E)
 		double eps = 0.00001;
 
 		const PhoneMaterial& material = *(object.material);
+		
+		//菲涅尔反射计算
+		double refr = material.refract;
+		if (isInObj) refr = 1.f / refr;
+		double Kr, Kt;
+		vec3f refrDir = getRefrDir(r.dir, normal, refr,&Kr,&Kt);
 
 		double diffPer = material.alpha*(1 - material.reflectiveness);
 		double specPer = material.alpha*material.reflectiveness;
 		double refrPer = 1 - material.alpha;
+		if (material.alpha == 0)
+		{
+			diffPer = 0;
+			specPer = Kr;
+			refrPer = Kt;
+		}
 		if (depth < 1)//反射层数不多时将所有类型光线都计算出来
 		{
 			//return material.diffuse;
-			vec3f specDir, refrDir;
+			vec3f specDir;
 			vec3f diffE;
 			if (material.reflectiveness < 1 - eps)
 			{
@@ -166,12 +178,7 @@ vec3f Render::ExplicitRayTracer(const Ray & r, int depth, int E)
 				}
 			}
 			if(material.reflectiveness>eps)specDir = getSpecDir(r.dir, normal);
-			if (material.alpha < 1 - eps)
-			{
-				double refr = material.refract;
-				if (isInObj) refr = 1 / refr;
-				refrDir = getRefrDir(r.dir, normal, refr);
-			}
+
 			return material.emit*E
 				+ (diffE+material.diffuse.mult(ExplicitRayTracer(Ray(hitPoint,getDiffDir(normal)),depth+1,0)))*diffPer
 				+ material.specular.mult(ExplicitRayTracer(Ray(hitPoint, specDir), depth + 1))*specPer
@@ -182,9 +189,6 @@ vec3f Render::ExplicitRayTracer(const Ray & r, int depth, int E)
 			double randNum = rand01();
 			if (randNum < refrPer)
 			{
-				double refr = material.refract;
-				if (isInObj) refr = 1 / refr;
-				vec3f refrDir = getRefrDir(r.dir, normal, refr);
 				return material.emit + material.diffuse.mult(ExplicitRayTracer(Ray(hitPoint, refrDir), depth + 1))*refrPer;
 			}
 			else if (randNum < refrPer + specPer)
@@ -242,7 +246,7 @@ vec3f Render::getSpecDir(vec3f dir, vec3f normal)
 	return newDir;
 }
 
-vec3f Render::getRefrDir(vec3f dir, vec3f normal, double refr)
+vec3f Render::getRefrDir(vec3f dir, vec3f normal, double refr,double* Kr,double* Kt)
 {
 	//折射
 	double n = refr;//折射率
@@ -253,6 +257,14 @@ vec3f Render::getRefrDir(vec3f dir, vec3f normal, double refr)
 	double sin1 = x.len()*dirLenInv;
 	double sin2 = sin1 / n;
 	double cos2 = sqrt(1 - sin2*sin2);
+	if(Kr!=NULL&&Kt!=NULL)
+	{
+		double cos1 = sqrt(1.f - sin1 * sin1);
+		double rParall = (refr*cos1 - cos2) / (refr*cos1 + cos2);
+		double rVertical = (cos1 - refr * cos2) / (cos1 + refr * cos2);
+		*Kr = 0.5*(rParall*rParall + rVertical * rVertical);
+		*Kt = 1 - *Kr;
+	}
 
 	vec3f newDir = x.normalized()*sin2 + y.normalized()*cos2;
 	return newDir;
@@ -321,6 +333,6 @@ void Render::WriteToFile(std::string filename)
 	out << "P3\n";
 	out << W << " " << H << " " << 255 << " ";
 	for (int i = 0; i < W*H; ++i)
-		out << toInt(screen[i].x) << " " << toInt(screen[i].y) << " " << toInt(screen[i].z) << " ";
+		out << std::max(toInt(screen[i].x),0) << " " << std::max(0,toInt(screen[i].y)) << " " << std::max(0,toInt(screen[i].z)) << " ";
 	out.close();
 }

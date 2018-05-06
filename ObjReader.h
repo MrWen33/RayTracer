@@ -32,7 +32,7 @@ public:
 		loadFile(filename);
 	}
 
-	bool loadFile(std::string filename)
+	bool loadFile(std::string filename, const PhoneMaterial* material = NULL)
 	{
 		std::cout << "Loading file:" << filename << std::endl;
 		std::ifstream in(filename);
@@ -90,7 +90,7 @@ public:
 					{
 						faceNormal = faceNormal + normals[normalInd[i]] * 1.f / 3.f;
 					}
-					Triangle* triFace = new Triangle(&points[pointInd[0]], &points[pointInd[1]], &points[pointInd[2]], faceNormal);
+					Triangle* triFace = new Triangle(&points[pointInd[0]], &points[pointInd[1]], &points[pointInd[2]], faceNormal,material);
 					scene.push_back(triFace);
 				}
 				if (datas.size() == 4)//ËÄ±ßÐÎÃæÆ¬
@@ -111,9 +111,9 @@ public:
 					vec3f faceNormal1, faceNormal2;
 					faceNormal1 = (normals[normalInd[0]] + normals[normalInd[1]] + normals[normalInd[2]])*1.f / 3.f;
 					faceNormal2= (normals[normalInd[0]] + normals[normalInd[3]] + normals[normalInd[2]])*1.f / 3.f;
-					Triangle* triFace1 = new Triangle(&points[pointInd[0]], &points[pointInd[1]], &points[pointInd[2]], faceNormal1);
+					Triangle* triFace1 = new Triangle(&points[pointInd[0]], &points[pointInd[1]], &points[pointInd[2]], faceNormal1,material);
 					scene.push_back(triFace1);
-					Triangle* triFace2 = new Triangle(&points[pointInd[0]], &points[pointInd[2]], &points[pointInd[3]], faceNormal2);
+					Triangle* triFace2 = new Triangle(&points[pointInd[0]], &points[pointInd[2]], &points[pointInd[3]], faceNormal2,material);
 					scene.push_back(triFace2);
 				}
 			}
