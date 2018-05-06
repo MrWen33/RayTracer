@@ -13,7 +13,7 @@ public:
 	{
 	}
 
-	double Intersect(const Ray& R,vec3f &Normal) const//返回射线与圆相交的点的参数.若没有相交则返回0
+	void Intersect(const Ray& R,ClosestHitInfo& info) const//返回射线与圆相交的点的参数.若没有相交则返回0
 	{
 		double eps = 0.0001;
 		double a = R.dir.dot(R.dir);
@@ -21,7 +21,7 @@ public:
 		double c = (R.o - o).dot(R.o - o) - r*r;
 
 		double delta = b*b - 4 * a*c;
-		if (delta < 0)return 0;
+		if (delta < 0)return;
 		else
 		{
 			double t;
@@ -31,11 +31,13 @@ public:
 			t1 = (-b - sqrtDelta) / (2 * a);
 			if (t1 > eps) t = t1;
 			else if (t2 > eps) t = t2;
-			else return 0;
+			else return;
 			//计算射入点以计算法线
 			vec3f hitPoint = R.o + R.dir*t;
-			Normal = (hitPoint - o).normalized();
-			return t;
+			info.normal = (hitPoint - o).normalized();
+			info.prim = this;
+			info.min_t = t;
+			return;
 		}
 	}
 	AABB Bound() const {

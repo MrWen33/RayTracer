@@ -1,5 +1,6 @@
 #include "Boundary.h"
 #include"Vec.h"
+#include"Primitive.h"
 
 AABB::AABB()
 {
@@ -139,13 +140,19 @@ double AABB::getDis(const Ray & r) const//若在包围盒内则返回0，不相交则返回1e9
 	return t;
 } 
 
-double AABB::Intersect(const Ray & r, vec3f & Normal, const Primitive *& obj) const
+void AABB::Intersect(const Ray & r,ClosestHitInfo& info) const
 {
-	double t = 1e9;
+	double& t = info.min_t;
+	vec3f& Normal = info.normal;
+	const Primitive*& obj = info.prim;
+
+	ClosestHitInfo objInfo;
+	double& dis = objInfo.min_t;
+	vec3f& N = objInfo.normal;
 	for (int i = 0; i < objs.size(); ++i)
 	{
 		vec3f N;
-		double dis= objs[i]->Intersect(r, N);
+		objs[i]->Intersect(r, objInfo);
 		if (dis>0&&dis<t)
 		{
 			t = dis;
@@ -153,8 +160,6 @@ double AABB::Intersect(const Ray & r, vec3f & Normal, const Primitive *& obj) co
 			obj = objs[i];
 		}
 	}
-	if (t == 1e9)t = 0;
-	return t;
 }
 
 void AABB::Union(const AABB & newBound)

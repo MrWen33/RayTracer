@@ -37,11 +37,12 @@ public:
 		if (!bbox.isIntersect(r))return false;
 		if (isLeaf&&primList.size()>0)
 		{
+			ClosestHitInfo hitInfo;
 			for (Primitive* prim : primList)
 			{
 				vec3f normal;
-				double t = prim->Intersect(r, normal);
-				if (t > 0)
+				prim->Intersect(r, hitInfo);
+				if (hitInfo.min_t > 0&&hitInfo.min_t<1e9)
 				{
 					return true;
 				}
@@ -57,15 +58,16 @@ public:
 	{
 		if (isLeaf&&primList.size()>0)
 		{
+			ClosestHitInfo info;
 			for (Primitive* prim : primList)
 			{
-				vec3f normal;
-				double t = prim->Intersect(r, normal);
+				prim->Intersect(r, info);
+				double &t = info.min_t;
 				if (t > 0 && t < closest->min_t)
 				{
 					closest->min_t = t;
-					closest->normal = normal;
-					closest->prim = prim;
+					closest->normal = info.normal;
+					closest->prim = info.prim;
 				}
 			}
 		}
@@ -189,14 +191,14 @@ public:
 		{
 			if (bounds[i].isIntersect(r))
 			{
-				vec3f tempNormal;
-				const Primitive * tempObj;
-				double t = bounds[i].Intersect(r, tempNormal, tempObj);
+				ClosestHitInfo info;
+				bounds[i].Intersect(r,info);
+				double &t = info.min_t;
 				if (t > 0 && t < tClosest)
 				{
 					tClosest = t;
-					Normal = tempNormal;
-					obj = tempObj;
+					Normal = info.normal;
+					obj = info.prim;
 				}
 			}
 		}

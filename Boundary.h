@@ -1,12 +1,11 @@
 #pragma once
-#include"Primitive.h"
-
+#include"Interfaces.h"
 #include<queue>
 #include"Ray.h"
 
 class Primitive;
 
-class AABB {
+class AABB:public canIntersect {
 public:
 
 	double MaxX,MaxY,MaxZ;
@@ -19,7 +18,7 @@ public:
 	void addPrimitive(const Primitive * p);
 	void addPoint(vec3f p);
 	double getDis(const Ray& r) const;
-	double Intersect(const Ray& r, vec3f& Normal, const Primitive*& obj) const;
+	void Intersect(const Ray& r, ClosestHitInfo& info) const;
 	void Union(const AABB& other);
 	bool isIn(vec3f p) const;
 

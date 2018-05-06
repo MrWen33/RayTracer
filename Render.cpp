@@ -3,10 +3,12 @@
 bool Render::Intersect(const Ray & r, double & t, int & id, vec3f& normal)//r为求交的光线，t为光线参数，id为与光线相交的物体id
 {
 	t = 1e9;
-	vec3f mayNormal;
 	for (int i = 0; i < scene.size(); ++i)
 	{
-		double distance = scene[i]->Intersect(r, mayNormal);
+		ClosestHitInfo info;
+		scene[i]->Intersect(r, info);
+		double &distance = info.min_t;
+		vec3f &mayNormal = info.normal;
 		if (distance > 0 && distance < t)
 		{
 			t = distance;

@@ -31,10 +31,10 @@ public:
 		else normal = _normal;
 	}
 
-	double Intersect(const Ray& r,vec3f& Normal) const
+	void Intersect(const Ray& r,ClosestHitInfo& info) const
 	{
 		//克莱默法则判断三角形与射线相交
-		Normal = normal;
+		info.normal = normal;
 		double eps = 0.0001;
 		vec3f O = r.o;
 		vec3f D = r.dir;
@@ -43,12 +43,14 @@ public:
 		Mat33 Para(P2P0, P2P1, D);
 		double InvParaDet = 1/Para.det();
 		double u = Mat33(P2O, P2P1, D).det() * InvParaDet;
-		if (u < 0 || u>1)return 0;
+		if (u < 0 || u>1)return;
 		double v= Mat33(P2P0, P2O, D).det() * InvParaDet;
-		if (v < 0 || u+v>1)return 0;
+		if (v < 0 || u+v>1)return;
 		double t =- Mat33(P2P0, P2P1, P2O).det()*InvParaDet;
-		if (t < eps)return 0;
-		return t;
+		if (t < eps)return;
+		info.prim = this;
+		info.min_t = t;
+		return;
 	}
 
 	AABB Bound() const

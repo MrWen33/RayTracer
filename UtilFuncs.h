@@ -1,3 +1,4 @@
+#pragma once
 #include<iostream>
 inline double clamp(double n)
 {
