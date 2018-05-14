@@ -12,18 +12,21 @@
 #include"UtilFuncs.h"
 #include"AccelerationStructure.h"
 
+class Raytracer {
+	virtual void start(std::vector<Primitive*>& scene, const Ray& r, int depth) = 0;
+};
 
 class Render {
 private:
-	std::vector<Primitive*>& scene;
+	std::vector<Primitive*>& scene,&lights;
 	Camera cam;
 	int W, H,Samples,maxDepth;
 	vec3f* screen;
 	const AccelStruct accelStruct;
-	BVHNode* BVHRoot;
+	BVHNode* BVHRoot; 
 
-	bool Intersect(const Ray& r,double &t,int &id, vec3f& normal);
-	bool Intersect(const Ray & r, double & t,const Primitive*& obj, vec3f& normal);
+	bool Intersect(const Ray& r, double & t, int & id, vec3f& normal);
+	bool Intersect(const Ray & r, ClosestHitInfo& info);
 	vec3f RayTracer(const Ray& r, int depth);
 	vec3f ExplicitRayTracer(const Ray& r, int depth,int E=1);
 	vec3f TestTracer(const Ray& r);
@@ -34,8 +37,8 @@ private:
 	Ray getShadowRay(const vec3f& hitPoint,const Sphere* LightSphere,double * omega=NULL);
 
 public:
-	Render(std::vector<Primitive*>& scene, Camera cam,int samples,int _maxDepth,int W=600,int H=600)
-		:scene(scene),cam(cam),maxDepth(_maxDepth),W(W),H(H),accelStruct(scene)
+	Render(std::vector<Primitive*>& scene, std::vector<Primitive*>& lights, Camera cam,int samples,int _maxDepth,int W=600,int H=600)
+		:scene(scene),cam(cam),maxDepth(_maxDepth),W(W),H(H),accelStruct(scene),lights(lights)
 	{	
 		DEBUGPRINT("start build BVH");
 		BVHRoot = new BVHNode(scene);

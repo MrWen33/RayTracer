@@ -34,7 +34,6 @@ public:
 	void Intersect(const Ray& r,ClosestHitInfo& info) const
 	{
 		//克莱默法则判断三角形与射线相交
-		info.normal = normal;
 		double eps = 0.0001;
 		vec3f O = r.o;
 		vec3f D = r.dir;
@@ -47,7 +46,8 @@ public:
 		double v= Mat33(P2P0, P2O, D).det() * InvParaDet;
 		if (v < 0 || u+v>1)return;
 		double t =- Mat33(P2P0, P2P1, P2O).det()*InvParaDet;
-		if (t < eps)return;
+		if (t < eps||t>info.min_t)return;
+		info.normal = normal;
 		info.prim = this;
 		info.min_t = t;
 		return;

@@ -38,9 +38,10 @@ int main(int argc,char** argv)
 	}
 	ObjReader oreader;
 	oreader.loadFile("cat.obj",&REFR);
-	oreader.scene.push_back(new Sphere(vec3f(0, 15, 5), 1.5, &LIGHT));
 	oreader.scene.push_back(new Sphere(vec3f(0, 0, -20), 10, &DIFFUSE_BLUE));
-	Render render(oreader.scene,cam,samples,depth,1000,1000);
+	vector<Primitive*> lights;
+	lights.push_back(new Sphere(vec3f(0, 15, 5), 1.5, &LIGHT));
+	Render render(oreader.scene,lights,cam,samples,depth,1000,1000);
 	//Render render(scene, cam, samples, depth, 1000, 1000);
 	render.render(0);
 	cout << "Rendering Time:" << time(NULL) - begin <<"s"<< endl;

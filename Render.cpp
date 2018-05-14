@@ -19,14 +19,14 @@ bool Render::Intersect(const Ray & r, double & t, int & id, vec3f& normal)//rÎªÇ
 	return t < 1e9;
 }
 
-bool Render::Intersect(const Ray & r, double & t,const Primitive*& obj, vec3f& normal)//rÎªÇó½»µÄ¹âÏß£¬tÎª¹âÏß²ÎÊı£¬objÎªÓë¹âÏßÏà½»µÄÎïÌåÖ¸Õë
+bool Render::Intersect(const Ray & r,ClosestHitInfo& info)//rÎªÇó½»µÄ¹âÏß£¬tÎª¹âÏß²ÎÊı£¬objÎªÓë¹âÏßÏà½»µÄÎïÌåÖ¸Õë
 {
-	ClosestHitInfo info;
 	BVHRoot->Intersect(r,&info);
-	t = info.min_t;
-	obj = info.prim;
-	normal = info.normal;
-	return t<1e9;
+	for (int i = 0; i < lights.size(); ++i)
+	{
+		lights[i]->Intersect(r, info);
+	}
+	return info.min_t<1e9;
 }
 
 vec3f Render::RayTracer(const Ray & r, int depth)
@@ -118,14 +118,13 @@ vec3f Render::TestTracer(const Ray & r)
 vec3f Render::ExplicitRayTracer(const Ray & r, int depth, int E)
 {
 	if (depth > maxDepth) return vec3f();
-	double t = 0;
-	const Primitive* obj = NULL;
-	vec3f normal;
-	if (Intersect(r, t, obj, normal))
+	ClosestHitInfo hitInfo;
+	if (Intersect(r, hitInfo))
 	{
 		bool isInObj;//ÊÇ·ñÔÚÎïÌåÄÚ£¬ÎªÕÛÉäÌá¹©ĞÅÏ¢
-		const Primitive& object = *obj;
-		vec3f hitPoint = r.o + r.dir*t;//¹âÏß»÷ÖĞµã
+		const Primitive& object = *hitInfo.prim;
+		vec3f& normal = hitInfo.normal;
+		vec3f hitPoint = r.o + r.dir*hitInfo.min_t;//¹âÏß»÷ÖĞµã
 		if (normal.dot(r.dir) > 0)
 		{
 			normal = normal*-1;
@@ -161,18 +160,16 @@ vec3f Render::ExplicitRayTracer(const Ray & r, int depth, int E)
 			if (material.reflectiveness < 1 - eps)
 			{
 				//ÅĞ¶ÏµãÓë·¢¹âÌåµÄÁ¬ÏßÊÇ·ñÓĞÕÚµ²À´È·¶¨ÊÇ·ñÓĞÒõÓ°
-				for (int i = 0; i < scene.size(); ++i)
+				for (int i = 0; i < lights.size(); ++i)
 				{
 					//±éÀúËùÓĞ·¢¹âÌå
-					const Primitive* primitive = scene[i];
+					const Primitive* primitive = lights[i];
 					if (primitive->material->emit.x <= 0&& primitive->material->emit.y <= 0 && primitive->material->emit.z <= 0 )continue;
 					const Sphere* Light = dynamic_cast<const Sphere*>(primitive);
 					double omega;
 					Ray shadowRay = getShadowRay(hitPoint,Light,&omega);//Ëæ»ú²úÉúÒõÓ°¹âÏß
-					int LightID;
-					double t;
-					vec3f nor;
-					if (Intersect(shadowRay, t, LightID, nor) && LightID == i)//ÈôÁ¬ÏßÎŞ×èµ²
+					ClosestHitInfo SRHitInfo;
+					if (Intersect(shadowRay, SRHitInfo) && SRHitInfo.prim == primitive)//ÈôÁ¬ÏßÎŞ×èµ²
 					{
 						double Cos = (normal.dot(shadowRay.dir));
 						diffE = diffE + material.diffuse.mult(Light->material->emit*Cos*omega)*InvPI;
@@ -202,19 +199,17 @@ vec3f Render::ExplicitRayTracer(const Ray & r, int depth, int E)
 			{
 				vec3f diffE;
 				//ÅĞ¶ÏµãÓë·¢¹âÌåµÄÁ¬ÏßÊÇ·ñÓĞÕÚµ²À´È·¶¨ÊÇ·ñÓĞÒõÓ°
-				for (int i = 0; i < scene.size(); ++i)
+				for (int i = 0; i < lights.size(); ++i)
 				{
 					//DEBUGPRINT(lights.size());
 					//±éÀúËùÓĞ·¢¹âÌå
-					const Primitive* primitive = scene[i];
+					const Primitive* primitive = lights[i];
 					if (primitive->material->emit.x <= 0 && primitive->material->emit.y <= 0 && primitive->material->emit.z <= 0)continue;
 					const Sphere* Light = dynamic_cast<const Sphere*>(primitive);
 					double omega;
 					Ray shadowRay = getShadowRay(hitPoint, Light, &omega);//Ëæ»ú²úÉúÒõÓ°¹âÏß
-					int LightID;
-					double t;
-					vec3f nor;
-					if (Intersect(shadowRay, t, LightID, nor) && LightID == i)//ÈôÁ¬ÏßÎŞ×èµ²
+					ClosestHitInfo SRHitInfo;
+					if (Intersect(shadowRay, SRHitInfo) && SRHitInfo.prim == primitive)//ÈôÁ¬ÏßÎŞ×èµ²
 					{
 						double Cos = (normal.dot(shadowRay.dir));
 						diffE = diffE + material.diffuse.mult(Light->material->emit*Cos*omega)*InvPI;

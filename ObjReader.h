@@ -32,6 +32,13 @@ public:
 		loadFile(filename);
 	}
 
+	~ObjReader() {
+		for (Primitive* p : scene)
+		{
+			delete p;
+		}
+	}
+
 	bool loadFile(std::string filename, const PhoneMaterial* material = NULL)
 	{
 		std::cout << "Loading file:" << filename << std::endl;

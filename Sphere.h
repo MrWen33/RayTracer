@@ -32,6 +32,7 @@ public:
 			if (t1 > eps) t = t1;
 			else if (t2 > eps) t = t2;
 			else return;
+			if (t > info.min_t)return;
 			//计算射入点以计算法线
 			vec3f hitPoint = R.o + R.dir*t;
 			info.normal = (hitPoint - o).normalized();
