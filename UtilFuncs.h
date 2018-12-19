@@ -14,7 +14,7 @@ inline double rand01()
 
 //inline int toInt(double n)
 //{
-//	//将rgb值由0-1转为0-255
+//	//灏唕gb鍊肩敱0-1杞负0-255
 //	return 255 * clamp(n);
 //}
 

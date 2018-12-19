@@ -3,8 +3,8 @@
 class PhoneMaterial
 {
 public:
-	vec3f diffuse, specular, emit;//É¢ÉäÑÕÉ«£¬·´ÉäÑÕÉ«,·¢¹â¶È
-	double  reflectiveness,alpha,refract;//¸ß¹â¶È,²»Í¸Ã÷¶È,ÕÛÉäÂÊ
+	vec3f diffuse, specular, emit;//æ•£å°„é¢œè‰²ï¼Œåå°„é¢œè‰²,å‘å…‰åº¦
+	double  reflectiveness,alpha,refract;//é«˜å…‰åº¦,ä¸é€æ˜åº¦,æŠ˜å°„ç‡
 	PhoneMaterial()
 		:diffuse(1), specular(0), emit(0), reflectiveness(0),alpha(1),refract(0) { }
 	PhoneMaterial(vec3f diff, vec3f spec, vec3f _emit, double refl,double _alpha,double refr) 

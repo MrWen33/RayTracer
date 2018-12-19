@@ -4,7 +4,7 @@
 #include"Mat.h"
 #include"Primitive.h"
 
-class Triangle:public Primitive{//ÄæÊ±Õë·½ÏòÎªÕıÃæ
+class Triangle:public Primitive{//é€†æ—¶é’ˆæ–¹å‘ä¸ºæ­£é¢
 public:
 	vec3f* p[3];
 	vec3f normal;
@@ -33,7 +33,7 @@ public:
 
 	void Intersect(const Ray& r,ClosestHitInfo& info) const
 	{
-		//¿ËÀ³Ä¬·¨ÔòÅĞ¶ÏÈı½ÇĞÎÓëÉäÏßÏà½»
+		//å…‹è±é»˜æ³•åˆ™åˆ¤æ–­ä¸‰è§’å½¢ä¸å°„çº¿ç›¸äº¤
 		double eps = 0.0001;
 		vec3f O = r.o;
 		vec3f D = r.dir;

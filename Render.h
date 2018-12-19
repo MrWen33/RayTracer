@@ -33,7 +33,7 @@ private:
 
 	vec3f getDiffDir(vec3f normal);
 	vec3f getSpecDir(vec3f dir, vec3f normal);
-	vec3f getRefrDir(vec3f dir, vec3f normal, double refr,double* Kr=NULL,double* Kt=NULL);//¼ÆËã·ÆÄù¶û·´Éä
+	vec3f getRefrDir(vec3f dir, vec3f normal, double refr,double* Kr=NULL,double* Kt=NULL);//Â¼Ã†Ã‹Ã£Â·Ã†Ã„Ã¹Â¶Ã»Â·Â´Ã‰Ã¤
 	Ray getShadowRay(const vec3f& hitPoint,const Sphere* LightSphere,double * omega=NULL);
 
 public:

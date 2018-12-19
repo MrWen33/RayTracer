@@ -5,7 +5,7 @@ class Mat33 {
 private:
 	double data[3][3];
 public:
-	Mat33()//³õÊ¼»¯µ¥Î»¾ØÕó
+	Mat33()//åˆå§‹åŒ–å•ä½çŸ©é˜µ
 	{
 		for (int i = 0; i < 3; ++i)
 			for (int j = 0; j < 3; ++j)

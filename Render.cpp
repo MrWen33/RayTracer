@@ -1,6 +1,6 @@
 #include "Render.h"
 
-bool Render::Intersect(const Ray & r, double & t, int & id, vec3f& normal)//rÎªÇó½»µÄ¹âÏß£¬tÎª¹âÏß²ÎÊı£¬idÎªÓë¹âÏßÏà½»µÄÎïÌåid
+bool Render::Intersect(const Ray & r, double & t, int & id, vec3f& normal)//rä¸ºæ±‚äº¤çš„å…‰çº¿ï¼Œtä¸ºå…‰çº¿å‚æ•°ï¼Œidä¸ºä¸å…‰çº¿ç›¸äº¤çš„ç‰©ä½“id
 {
 	t = 1e9;
 	for (int i = 0; i < scene.size(); ++i)
@@ -19,7 +19,7 @@ bool Render::Intersect(const Ray & r, double & t, int & id, vec3f& normal)//rÎªÇ
 	return t < 1e9;
 }
 
-bool Render::Intersect(const Ray & r,ClosestHitInfo& info)//rÎªÇó½»µÄ¹âÏß£¬tÎª¹âÏß²ÎÊı£¬objÎªÓë¹âÏßÏà½»µÄÎïÌåÖ¸Õë
+bool Render::Intersect(const Ray & r,ClosestHitInfo& info)//rä¸ºæ±‚äº¤çš„å…‰çº¿ï¼Œtä¸ºå…‰çº¿å‚æ•°ï¼Œobjä¸ºä¸å…‰çº¿ç›¸äº¤çš„ç‰©ä½“æŒ‡é’ˆ
 {
 	BVHRoot->Intersect(r,&info);
 	for (int i = 0; i < lights.size(); ++i)
@@ -37,9 +37,9 @@ vec3f Render::RayTracer(const Ray & r, int depth)
 	vec3f normal;
 	if (Intersect(r, t, id, normal))
 	{
-		bool isInObj;//ÊÇ·ñÔÚÎïÌåÄÚ£¬ÎªÕÛÉäÌá¹©ĞÅÏ¢
+		bool isInObj;//æ˜¯å¦åœ¨ç‰©ä½“å†…ï¼Œä¸ºæŠ˜å°„æä¾›ä¿¡æ¯
 		const Primitive& object = *scene[id];
-		vec3f hitPoint = r.o + r.dir*t;//¹âÏß»÷ÖĞµã
+		vec3f hitPoint = r.o + r.dir*t;//å…‰çº¿å‡»ä¸­ç‚¹
 		if (normal.dot(r.dir) > 0)
 		{
 			normal = normal*-1;
@@ -52,7 +52,7 @@ vec3f Render::RayTracer(const Ray & r, int depth)
 		double diffPer = material.alpha*(1 - material.reflectiveness);
 		double specPer = material.alpha*material.reflectiveness;
 		double refrPer = 1 - material.alpha;
-		if (depth < 1)//·´Éä²ãÊı²»¶àÊ±½«ËùÓĞÀàĞÍ¹âÏß¶¼¼ÆËã³öÀ´
+		if (depth < 1)//åå°„å±‚æ•°ä¸å¤šæ—¶å°†æ‰€æœ‰ç±»å‹å…‰çº¿éƒ½è®¡ç®—å‡ºæ¥
 		{
 			//return material.diffuse;
 			vec3f diffDir, specDir, refrDir;
@@ -69,7 +69,7 @@ vec3f Render::RayTracer(const Ray & r, int depth)
 				+ material.specular.mult(RayTracer(Ray(hitPoint, specDir), depth + 1))*specPer
 				+ material.diffuse.mult(RayTracer(Ray(hitPoint, refrDir), depth + 1))*refrPer;
 		}
-		else//·´Éä²ãÊı¶àÊ±°´·´Éä±ÈÀıËæ»ú¼ÆËã
+		else//åå°„å±‚æ•°å¤šæ—¶æŒ‰åå°„æ¯”ä¾‹éšæœºè®¡ç®—
 		{
 			double randNum = rand() / (double)RAND_MAX;
 			if (randNum < refrPer)
@@ -121,10 +121,10 @@ vec3f Render::ExplicitRayTracer(const Ray & r, int depth, int E)
 	ClosestHitInfo hitInfo;
 	if (Intersect(r, hitInfo))
 	{
-		bool isInObj;//ÊÇ·ñÔÚÎïÌåÄÚ£¬ÎªÕÛÉäÌá¹©ĞÅÏ¢
+		bool isInObj;//æ˜¯å¦åœ¨ç‰©ä½“å†…ï¼Œä¸ºæŠ˜å°„æä¾›ä¿¡æ¯
 		const Primitive& object = *hitInfo.prim;
 		vec3f& normal = hitInfo.normal;
-		vec3f hitPoint = r.o + r.dir*hitInfo.min_t;//¹âÏß»÷ÖĞµã
+		vec3f hitPoint = r.o + r.dir*hitInfo.min_t;//å…‰çº¿å‡»ä¸­ç‚¹
 		if (normal.dot(r.dir) > 0)
 		{
 			normal = normal*-1;
@@ -137,7 +137,7 @@ vec3f Render::ExplicitRayTracer(const Ray & r, int depth, int E)
 
 		const PhoneMaterial& material = *(object.material);
 		
-		//·ÆÄù¶û·´Éä¼ÆËã
+		//è²æ¶…å°”åå°„è®¡ç®—
 		double refr = material.refract;
 		if (isInObj) refr = 1.f / refr;
 		double Kr, Kt;
@@ -152,24 +152,24 @@ vec3f Render::ExplicitRayTracer(const Ray & r, int depth, int E)
 			specPer = Kr;
 			refrPer = Kt;
 		}
-		if (depth < 1)//·´Éä²ãÊı²»¶àÊ±½«ËùÓĞÀàĞÍ¹âÏß¶¼¼ÆËã³öÀ´
+		if (depth < 1)//åå°„å±‚æ•°ä¸å¤šæ—¶å°†æ‰€æœ‰ç±»å‹å…‰çº¿éƒ½è®¡ç®—å‡ºæ¥
 		{
 			//return material.diffuse;
 			vec3f specDir;
 			vec3f diffE;
 			if (material.reflectiveness < 1 - eps)
 			{
-				//ÅĞ¶ÏµãÓë·¢¹âÌåµÄÁ¬ÏßÊÇ·ñÓĞÕÚµ²À´È·¶¨ÊÇ·ñÓĞÒõÓ°
+				//åˆ¤æ–­ç‚¹ä¸å‘å…‰ä½“çš„è¿çº¿æ˜¯å¦æœ‰é®æŒ¡æ¥ç¡®å®šæ˜¯å¦æœ‰é˜´å½±
 				for (int i = 0; i < lights.size(); ++i)
 				{
-					//±éÀúËùÓĞ·¢¹âÌå
+					//éå†æ‰€æœ‰å‘å…‰ä½“
 					const Primitive* primitive = lights[i];
 					if (primitive->material->emit.x <= 0&& primitive->material->emit.y <= 0 && primitive->material->emit.z <= 0 )continue;
 					const Sphere* Light = dynamic_cast<const Sphere*>(primitive);
 					double omega;
-					Ray shadowRay = getShadowRay(hitPoint,Light,&omega);//Ëæ»ú²úÉúÒõÓ°¹âÏß
+					Ray shadowRay = getShadowRay(hitPoint,Light,&omega);//éšæœºäº§ç”Ÿé˜´å½±å…‰çº¿
 					ClosestHitInfo SRHitInfo;
-					if (Intersect(shadowRay, SRHitInfo) && SRHitInfo.prim == primitive)//ÈôÁ¬ÏßÎŞ×èµ²
+					if (Intersect(shadowRay, SRHitInfo) && SRHitInfo.prim == primitive)//è‹¥è¿çº¿æ— é˜»æŒ¡
 					{
 						double Cos = (normal.dot(shadowRay.dir));
 						diffE = diffE + material.diffuse.mult(Light->material->emit*Cos*omega)*InvPI;
@@ -183,7 +183,7 @@ vec3f Render::ExplicitRayTracer(const Ray & r, int depth, int E)
 				+ material.specular.mult(ExplicitRayTracer(Ray(hitPoint, specDir), depth + 1))*specPer
 					+ material.diffuse.mult(ExplicitRayTracer(Ray(hitPoint, refrDir), depth + 1))*refrPer;
 		}
-		else//·´Éä²ãÊı¶àÊ±°´·´Éä±ÈÀıËæ»ú¼ÆËã
+		else//åå°„å±‚æ•°å¤šæ—¶æŒ‰åå°„æ¯”ä¾‹éšæœºè®¡ç®—
 		{
 			double randNum = rand01();
 			if (randNum < refrPer)
@@ -198,18 +198,18 @@ vec3f Render::ExplicitRayTracer(const Ray & r, int depth, int E)
 			else
 			{
 				vec3f diffE;
-				//ÅĞ¶ÏµãÓë·¢¹âÌåµÄÁ¬ÏßÊÇ·ñÓĞÕÚµ²À´È·¶¨ÊÇ·ñÓĞÒõÓ°
+				//åˆ¤æ–­ç‚¹ä¸å‘å…‰ä½“çš„è¿çº¿æ˜¯å¦æœ‰é®æŒ¡æ¥ç¡®å®šæ˜¯å¦æœ‰é˜´å½±
 				for (int i = 0; i < lights.size(); ++i)
 				{
 					//DEBUGPRINT(lights.size());
-					//±éÀúËùÓĞ·¢¹âÌå
+					//éå†æ‰€æœ‰å‘å…‰ä½“
 					const Primitive* primitive = lights[i];
 					if (primitive->material->emit.x <= 0 && primitive->material->emit.y <= 0 && primitive->material->emit.z <= 0)continue;
 					const Sphere* Light = dynamic_cast<const Sphere*>(primitive);
 					double omega;
-					Ray shadowRay = getShadowRay(hitPoint, Light, &omega);//Ëæ»ú²úÉúÒõÓ°¹âÏß
+					Ray shadowRay = getShadowRay(hitPoint, Light, &omega);//éšæœºäº§ç”Ÿé˜´å½±å…‰çº¿
 					ClosestHitInfo SRHitInfo;
-					if (Intersect(shadowRay, SRHitInfo) && SRHitInfo.prim == primitive)//ÈôÁ¬ÏßÎŞ×èµ²
+					if (Intersect(shadowRay, SRHitInfo) && SRHitInfo.prim == primitive)//è‹¥è¿çº¿æ— é˜»æŒ¡
 					{
 						double Cos = (normal.dot(shadowRay.dir));
 						diffE = diffE + material.diffuse.mult(Light->material->emit*Cos*omega)*InvPI;
@@ -245,8 +245,8 @@ vec3f Render::getSpecDir(vec3f dir, vec3f normal)
 
 vec3f Render::getRefrDir(vec3f dir, vec3f normal, double refr,double* Kr,double* Kt)
 {
-	//ÕÛÉä
-	double n = refr;//ÕÛÉäÂÊ
+	//æŠ˜å°„
+	double n = refr;//æŠ˜å°„ç‡
 	double NdotD = normal.dot(dir);
 	vec3f y = normal*NdotD;
 	vec3f x = dir - y;
@@ -271,14 +271,14 @@ Ray Render::getShadowRay(const vec3f & hitPoint, const Sphere * LightSphere, dou
 {
 	assert(LightSphere != NULL);
 
-	//ÒÔÔ²¹âÔ´µ½ÉäÈëµãµÄÁ¬Ïß½¨Á¢Ö±½Ç×ø±êÏµ
+	//ä»¥åœ†å…‰æºåˆ°å°„å…¥ç‚¹çš„è¿çº¿å»ºç«‹ç›´è§’åæ ‡ç³»
 	vec3f lightPos = LightSphere->o;
 	vec3f w = (lightPos - hitPoint).normalized();
 	vec3f tmp = (abs(w.x) > 0.1) ? vec3f(0, 1, 0) : vec3f(1, 0, 0);
 	vec3f u = tmp.cross(w).normalized();
 	vec3f v = w.cross(u).normalized();
 
-	//Ëæ»úÑ¡È¡ÒõÓ°¹âÏß
+	//éšæœºé€‰å–é˜´å½±å…‰çº¿
 	double eps1 = rand01();
 	double eps2 = rand01();
 	double cos_a_max = sqrt(1 - LightSphere->r*LightSphere->r / (hitPoint - lightPos).dot(hitPoint - lightPos));
@@ -294,11 +294,11 @@ Ray Render::getShadowRay(const vec3f & hitPoint, const Sphere * LightSphere, dou
 
 void Render::render(int mode)
 {
-	//¶ÔÓÚÃ¿¸öÏñËØ
+	//å¯¹äºæ¯ä¸ªåƒç´ 
 #pragma omp parallel for schedule(dynamic, 1)
 	for (int i = 0; i < H; ++i)
 	{
-		//ÃüÁîĞĞÏÔÊ¾äÖÈ¾½ø¶È
+		//å‘½ä»¤è¡Œæ˜¾ç¤ºæ¸²æŸ“è¿›åº¦
 		fprintf(stderr, "\rRendering (%d spp) %5.2f%%", Samples * 4, 100.*i / (H - 1));
 		for (int j = 0; j < W; ++j)
 		{
@@ -308,10 +308,10 @@ void Render::render(int mode)
 					vec3f r;
 					for (int s = 0; s < Samples; ++s)
 					{
-						//¼ÆËãÊÓÍ¼Æ½ÃæÉÏµÄ×ø±ê(¼ÓÈëÁËËæ»úÆ«ÒÆÁ¿)
+						//è®¡ç®—è§†å›¾å¹³é¢ä¸Šçš„åæ ‡(åŠ å…¥äº†éšæœºåç§»é‡)
 						double xbias = ((double)j + 0.25 + 0.5*sx + (rand01() - 0.5)) / W;
 						double ybias = 1 - ((double)i + 0.25 + 0.5*sy + (rand01() - 0.5)) / H;
-						//¸ù¾İ×ø±êÓÃÕÕÏà»úÀà¼ÆËãÍ¶Éä¹âÏß
+						//æ ¹æ®åæ ‡ç”¨ç…§ç›¸æœºç±»è®¡ç®—æŠ•å°„å…‰çº¿
 						Ray dir = cam.getRay(xbias, ybias);
 
 						if (mode==1)r =r + RayTracer(dir, 0) / (double)Samples;

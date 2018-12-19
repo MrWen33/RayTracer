@@ -90,7 +90,7 @@ void AABB::addPoint(vec3f p)
 	MinZ = std::min(MinZ, p.z);
 }
 
-double AABB::getDis(const Ray & r) const//ÈôÔÚ°üÎ§ºĞÄÚÔò·µ»Ø0£¬²»Ïà½»Ôò·µ»Ø1e9
+double AABB::getDis(const Ray & r) const//è‹¥åœ¨åŒ…å›´ç›’å†…åˆ™è¿”å›0ï¼Œä¸ç›¸äº¤åˆ™è¿”å›1e9
 {
 	if (isIn(r.o))return 0;
 	double eps = 0.0001f;

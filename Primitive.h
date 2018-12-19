@@ -7,7 +7,7 @@
 class AABB;
 class canIntersect;
 
-//一切物体的父类
+//涓�鍒囩墿浣撶殑鐖剁被
 class Primitive :public canIntersect {
 public:
 	const PhoneMaterial* material;

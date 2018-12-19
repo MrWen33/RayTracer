@@ -31,7 +31,7 @@ public:
 	{
 		return bbox.getDis(r);
 	}
-	//ÅĞ¶ÏÉäÏßÊÇ·ñÓë¸Ã½ÚµãÏà½»
+	//åˆ¤æ–­å°„çº¿æ˜¯å¦ä¸è¯¥èŠ‚ç‚¹ç›¸äº¤
 	bool isIntersect(const Ray& r)
 	{
 		if (!bbox.isIntersect(r))return false;
@@ -53,7 +53,7 @@ public:
 			return L->isIntersect(r) || R->isIntersect(r);
 		}
 	}
-	//¼ÆËãÉäÏßÓë½ÚµãÏà½»µÄĞÅÏ¢
+	//è®¡ç®—å°„çº¿ä¸èŠ‚ç‚¹ç›¸äº¤çš„ä¿¡æ¯
 	void Intersect(const Ray& r,ClosestHitInfo* closest)
 	{
 		if (isLeaf&&primList.size()>0)
@@ -87,7 +87,7 @@ public:
 				first = R;
 				second = L;
 			}
-			//ÈôÓë×Ó°üÎ§ºĞÄÜÏà½»
+			//è‹¥ä¸å­åŒ…å›´ç›’èƒ½ç›¸äº¤
 			if (std::min(t1, t2) < 1e9)
 			{
 				first->Intersect(r, closest);
@@ -134,7 +134,7 @@ public:
 					bestMid = mid;
 				}
 			}
-			//ÉèÖÃ×óÓÒ×Ó½Úµã
+			//è®¾ç½®å·¦å³å­èŠ‚ç‚¹
 			L = new BVHNode;
 			L->isLeaf = true;
 			L->bbox = primList[0]->Bound();

@@ -10,11 +10,11 @@ struct IsectData {
 	vec3f Emit;
 };
 
-//ÉäÏßÓë»ùÔªÏà½»µÄĞÅÏ¢
+//å°„çº¿ä¸åŸºå…ƒç›¸äº¤çš„ä¿¡æ¯
 struct ClosestHitInfo {
 	ClosestHitInfo();
 	const Primitive* prim = NULL;
 	vec3f normal;
 	double min_t;
 	static const double inf_t;
-};//²»Ïà½»min_tÎª1e9»ò0£¬primÎªNULL
+};//ä¸ç›¸äº¤min_tä¸º1e9æˆ–0ï¼Œprimä¸ºNULL

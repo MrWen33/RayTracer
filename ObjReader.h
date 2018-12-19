@@ -10,15 +10,15 @@
 class ObjReader {
 public:
 	int TriNum=0;
-	std::vector<Primitive*> scene;//¶ÁÈ¡µÄ³¡¾°
-	std::vector<vec3f> points;//µã×ø±ê
-	std::vector<vec3f> normals;//·¨Ïß
-	//std::vector<vec2f> textures;//²ÄÖÊ×ø±ê
+	std::vector<Primitive*> scene;//è¯»å–çš„åœºæ™¯
+	std::vector<vec3f> points;//ç‚¹åæ ‡
+	std::vector<vec3f> normals;//æ³•çº¿
+	//std::vector<vec2f> textures;//æè´¨åæ ‡
 
 	ObjReader()
 	{
 		TriNum = 0;
-		//²»Ê¹ÓÃÏÂ±ê0
+		//ä¸ä½¿ç”¨ä¸‹æ ‡0
 		points.push_back(vec3f());
 		normals.push_back(vec3f());
 	}
@@ -26,7 +26,7 @@ public:
 	ObjReader(std::string filename)
 	{
 		TriNum = 0;
-		//²»Ê¹ÓÃÏÂ±ê0
+		//ä¸ä½¿ç”¨ä¸‹æ ‡0
 		points.push_back(vec3f());
 		normals.push_back(vec3f());
 		loadFile(filename);
@@ -54,23 +54,23 @@ public:
 			std::string mode;
 			linestream >> mode;
 			//DEBUGPRINT(mode);
-			if (mode == "v"||mode=="V")//¶¥µã×ø±êÊı¾İ
+			if (mode == "v"||mode=="V")//é¡¶ç‚¹åæ ‡æ•°æ®
 			{
 				vec3f point;
 				linestream >> point.x >> point.y >> point.z;
 				points.push_back(point);
 			}
-			if (mode == "vt" || mode == "VT")//¶¥µã²ÄÖÊ×ø±ê
+			if (mode == "vt" || mode == "VT")//é¡¶ç‚¹æè´¨åæ ‡
 			{
-				//Todo:¶ÁÈ¡²ÄÖÊ
+				//Todo:è¯»å–æè´¨
 			}
-			if (mode == "vn" || mode == "VN")//¶¥µã·¨Ïß
+			if (mode == "vn" || mode == "VN")//é¡¶ç‚¹æ³•çº¿
 			{
 				vec3f normal;
 				linestream >> normal.x >> normal.y >> normal.z;
 				normals.push_back(normal);
 			}
-			if (mode == "f" || mode == "F")//ÃæÊı¾İ
+			if (mode == "f" || mode == "F")//é¢æ•°æ®
 			{
 				std::string data;
 				std::vector<std::string> datas;
@@ -78,12 +78,12 @@ public:
 				{
 					datas.push_back(data);
 				}
-				if (datas.size() == 3)//Èı½ÇĞÎÃæÆ¬
+				if (datas.size() == 3)//ä¸‰è§’å½¢é¢ç‰‡
 				{
 					TriNum++;
 					std::vector<int> pointInd(3);
 					std::vector<int> normalInd(3);
-					std::vector<int> textureInd(3);//ÔİÊ±Ã»ÓÃ
+					std::vector<int> textureInd(3);//æš‚æ—¶æ²¡ç”¨
 
 					for (int i = 0; i < 3; ++i)
 					{
@@ -100,12 +100,12 @@ public:
 					Triangle* triFace = new Triangle(&points[pointInd[0]], &points[pointInd[1]], &points[pointInd[2]], faceNormal,material);
 					scene.push_back(triFace);
 				}
-				if (datas.size() == 4)//ËÄ±ßĞÎÃæÆ¬
+				if (datas.size() == 4)//å››è¾¹å½¢é¢ç‰‡
 				{
 					TriNum += 2;
 					std::vector<int> pointInd(4);
 					std::vector<int> normalInd(4);
-					std::vector<int> textureInd(4);//ÔİÊ±Ã»ÓÃ
+					std::vector<int> textureInd(4);//æš‚æ—¶æ²¡ç”¨
 
 					for (int i = 0; i < 4; ++i)
 					{
@@ -131,7 +131,7 @@ public:
 		in.close();
 	}
 
-	std::vector<int> parseFaceData(std::string data) {//data¸ñÊ½ĞèÎªĞÎÈç1/2/3»ò1//2»ò1/2»ò1µÈ
+	std::vector<int> parseFaceData(std::string data) {//dataæ ¼å¼éœ€ä¸ºå½¢å¦‚1/2/3æˆ–1//2æˆ–1/2æˆ–1ç­‰
 		std::vector<std::string> sResult(3);
 		std::vector<int> result(3);
 		int curInd=0;

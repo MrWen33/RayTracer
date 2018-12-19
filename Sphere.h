@@ -13,7 +13,7 @@ public:
 	{
 	}
 
-	void Intersect(const Ray& R,ClosestHitInfo& info) const//·µ»ØÉäÏßÓëÔ²Ïà½»µÄµãµÄ²ÎÊı.ÈôÃ»ÓĞÏà½»Ôò·µ»Ø0
+	void Intersect(const Ray& R,ClosestHitInfo& info) const//è¿”å›å°„çº¿ä¸åœ†ç›¸äº¤çš„ç‚¹çš„å‚æ•°.è‹¥æ²¡æœ‰ç›¸äº¤åˆ™è¿”å›0
 	{
 		double eps = 0.0001;
 		double a = R.dir.dot(R.dir);
@@ -33,7 +33,7 @@ public:
 			else if (t2 > eps) t = t2;
 			else return;
 			if (t > info.min_t)return;
-			//¼ÆËãÉäÈëµãÒÔ¼ÆËã·¨Ïß
+			//è®¡ç®—å°„å…¥ç‚¹ä»¥è®¡ç®—æ³•çº¿
 			vec3f hitPoint = R.o + R.dir*t;
 			info.normal = (hitPoint - o).normalized();
 			info.prim = this;
