@@ -129,6 +129,7 @@ public:
 		DEBUGPRINT("load success");
 		std::cout << "Facenum:" << TriNum << std::endl;
 		in.close();
+		return true;
 	}
 
 	std::vector<int> parseFaceData(std::string data) {//data格式需为形如1/2/3或1//2或1/2或1等
