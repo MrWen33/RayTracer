@@ -7,9 +7,7 @@
 使用方法：编译成exe文件后，命令行执行```[可执行文件文件名] -样本数 -光线反射次数```，运行完成后会在当前文件夹下生成渲染图片image.ppm。模型目前可以从3D文件中读取.[模型信息来源](http://www.kevinbeason.com/smallpt/)
 
 渲染效果图：
-![render](image-16spp.jpg)
-![render](image-whiteCat.jpg)
-![render](image-cat.jpg)
+![render](sample_16spp.jpg)
 
 目前实现的功能有：
 
