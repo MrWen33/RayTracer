@@ -111,7 +111,7 @@ public:
 			int axis = 0;
 			vec3f len = bbox.length();
 			axis = len[0] > len[1] ? len[0] > len[2] ? 0 : 2 : len[1] > len[2] ? 1 : 2;
-			sort(primList.begin(), primList.end(), [axis](Primitive*& b1, Primitive* &b2) {
+			sort(primList.begin(), primList.end(), [axis](Primitive* const & b1, Primitive* const &b2) {
 				return b1->Bound().center()[axis] < b2->Bound().center()[axis];
 			});
 			int mid = 1;
