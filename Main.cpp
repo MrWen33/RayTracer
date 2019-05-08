@@ -23,6 +23,47 @@ vector<Primitive*> scene = {
 	//new Triangle(new vec3f(50,81,81.6),new vec3f(50,81,47),new vec3f(73,81,47),&LIGHT)
 };
 
+void showHelp(){
+	cout<<"RayTracer [-h]"<<endl;
+	cout<<"RayTracer [-s <samples>] [-d <depth>] [-p <filepath>] [-o <outputimgpath>]"<<endl;
+}
+
+bool parseParam(int argc, char** argv, int& samples, int& depth, char path[], char outputPath[]){
+	for(int i =1;i<argc;++i){
+		if(argv[i][0]=='-'){
+			switch (argv[i][1])
+			{
+				case 'h':
+					showHelp();
+					return 0;
+					break;
+				case 's':
+					sscanf(argv[i+1], "%d", &samples);
+					break;
+				case 'd':
+					sscanf(argv[i+1],"%d", &depth);
+					break;
+				case 'p':
+					sscanf(argv[i+1], "%s", path);
+					cout<<"filepath:"<<path<<endl;
+					break;
+				case 'o':
+					sscanf(argv[i+1], "%s", outputPath);
+					break;
+				default:
+					showHelp();
+					return 0;
+					break;
+			}
+			i++;
+		}else{
+			showHelp();
+			return 0;
+		}
+	}
+	return 1;
+}
+
 int main(int argc,char** argv)
 {
 	//Camera cam(vec3f(50, 52, 145.6), vec3f(0, -0.042612, -1), vec3f(0, 1, 0), 90);
@@ -31,16 +72,16 @@ int main(int argc,char** argv)
 
 	int samples = 16;
 	int depth = 3;
-	if (argc == 3)
-	{
-		sprintf(argv[1], "%d", samples);
-		sprintf(argv[2], "%d", depth);
-	}
+	char path[128] = "\0";
+	char outputPath[128] = "image.ppm";
+	if(!parseParam(argc, argv, samples, depth, path, outputPath)){
+		return 0;
+	};
 	ObjReader oreader;
-	oreader.loadFile("cat.obj",&REFR);
-	oreader.scene.push_back(new Sphere(vec3f(0, 0, -20), 10, &DIFFUSE_BLUE));
+	oreader.loadFile(path,&REFR);
+	oreader.scene.push_back(new Sphere(vec3f(0, -1e9, 0), 1e9-15, &DIFFUSE_BLUE));
 	vector<Primitive*> lights;
-	lights.push_back(new Sphere(vec3f(0, 15, 5), 1.5, &LIGHT));
+	lights.push_back(new Sphere(vec3f(0, 40, 10), 1.5, &LIGHT));
 	Render render(oreader.scene,lights,cam,samples,depth,1000,1000);
 	//Render render(scene, cam, samples, depth, 1000, 1000);
 	render.render(0);
@@ -49,6 +90,6 @@ int main(int argc,char** argv)
 	timeS << time(NULL) - begin;
 	string Time;
 	timeS >> Time;
-	render.WriteToFile("image.ppm");
+	render.WriteToFile(outputPath);
 	//system("pause");
 }

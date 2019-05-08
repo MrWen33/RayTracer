@@ -270,25 +270,11 @@ vec3f Render::getRefrDir(vec3f dir, vec3f normal, double refr,double* Kr,double*
 Ray Render::getShadowRay(const vec3f & hitPoint, const Sphere * LightSphere, double * omega)//
 {
 	assert(LightSphere != NULL);
-
-	//以圆光源到射入点的连线建立直角坐标系
 	vec3f lightPos = LightSphere->o;
 	vec3f w = (lightPos - hitPoint).normalized();
-	vec3f tmp = (abs(w.x) > 0.1) ? vec3f(0, 1, 0) : vec3f(1, 0, 0);
-	vec3f u = tmp.cross(w).normalized();
-	vec3f v = w.cross(u).normalized();
-
-	//随机选取阴影光线
-	double eps1 = rand01();
-	double eps2 = rand01();
-	double cos_a_max = sqrt(1 - LightSphere->r*LightSphere->r / (hitPoint - lightPos).dot(hitPoint - lightPos));
-	double cos_a = 1 - eps1 + eps1*cos_a_max;
-	double sin_a = sqrt(1 - cos_a*cos_a);
-	double theta = 2 * PI*eps2;
-	vec3f dir = w*cos_a + u*sin_a*cos(theta) + v*sin_a*sin(theta);
+	vec3f dir = w;
 	dir = dir.normalized();
-	vec3f no;
-	if (omega != NULL) *omega = 2 * PI*(1 - cos_a_max);
+	if (omega != NULL) *omega = 1;
 	return Ray(hitPoint, dir);
 }
 
