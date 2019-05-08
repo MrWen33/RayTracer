@@ -15,7 +15,7 @@ addons:
   
 deploy:
   provider: releases
-  api_key: "kVJzM63jKuKwC8rzESWiOQ"
+  api_key: $GITHUB_TOKEN
   file: "build/RayTracer"
   skip_cleanup: true
   on:
