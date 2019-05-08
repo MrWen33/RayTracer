@@ -1,5 +1,7 @@
 # 一个简单的光线追踪器
 
+[![Build Status](https://travis-ci.com/MrWen33/RayTracer.svg?branch=master)](https://travis-ci.com/MrWen33/RayTracer)
+
 一个简单的光线追踪器，用于练习图形学算法。
 
 使用方法：编译成exe文件后，命令行执行```[可执行文件文件名] -样本数 -光线反射次数```，运行完成后会在当前文件夹下生成渲染图片image.ppm。模型目前可以从3D文件中读取.[模型信息来源](http://www.kevinbeason.com/smallpt/)
